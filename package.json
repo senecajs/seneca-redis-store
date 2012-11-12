@@ -1,0 +1,36 @@
+{
+  "name": "seneca-redis",
+  "version": "0.0.1",
+  "description": "Redis storage layer for Seneca framework",
+  "main": "lib/redis-store.js",
+  "scripts": {
+    "test": "expresso test/redis.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bamse16/seneca-redis.git"
+  },
+  "keywords": [
+    "seneca",
+    "redis",
+    "plugin"
+  ],
+  "author": "Marius Ursache",
+  "license": "MIT",
+
+  "dependencies": {
+    "seneca":         ">=0.4.1",
+    "redis":          ">=0.8.0",
+    "underscore":     "1.1.x",
+    "date-utils":     ">=1.2.0",
+    "node-uuid":      "*"
+  },
+
+  "devDependencies": {
+    "expresso":"*",
+    "vows":"*",
+    "async":"*",
+    "eyes":"*",
+    "gex":"*"
+  }
+}
