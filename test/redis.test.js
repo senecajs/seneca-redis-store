@@ -15,15 +15,6 @@ var senecaRedisStoreOpts = {
     port:6379,
     auth:'secret'};
 
-si.use(senecaRedisStore, senecaRedisStoreOpts, useCallback);
-
-function useCallback(a,b,c){
-  require('eyes').inspect([a,b,c], "a,b,c:");
-
-}
-
-//require('eyes').inspect(senecaRedisStore, "senecaRedisStore:");
-
 si.__testcount = 0;
 var testcount = 0;
 
