@@ -12,8 +12,9 @@ var si = seneca(config);
 var senecaRedisStore = require('seneca-redis');
 var senecaRedisStoreOpts = {
     host:'localhost',
-    port:6379,
-    auth:'secret'};
+    port:6379};
+
+si.use(senecaRedisStore, senecaRedisStoreOpts);
 
 si.__testcount = 0;
 var testcount = 0;
