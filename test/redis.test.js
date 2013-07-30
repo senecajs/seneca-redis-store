@@ -1,31 +1,39 @@
+/*jslint node: true */
+/*global describe:true, it:true*/
 /* Copyright (c) 2012 Marius Ursache */
 
+"use strict";
+
+//var assert = require('assert');
 var seneca = require('seneca');
-var shared = require('seneca/test/store/shared');
+var async = require('async');
+var senecaRedisStore = require('..');
+var shared = seneca.test.store.shared;
 
-var config = {
-  log:'print'
-};
+//var si = seneca({ log:'print' });
+var si = seneca();
 
-var si = seneca(config);
-
-var senecaRedisStore = require('seneca-redis');
-var senecaRedisStoreOpts = {
-    host:'localhost',
-    port:6379};
-
-si.use(senecaRedisStore, senecaRedisStoreOpts);
-
+si.use(senecaRedisStore, { host:'localhost', port:6379});
 si.__testcount = 0;
 var testcount = 0;
 
-module.exports = {
-  basictest: (testcount++, shared.basictest(si)),
-  extratest: (testcount++, extratest(si)),
-  closetest: shared.closetest(si,testcount)
-};
+describe('redis', function(){
+  it('basic', function(done){
+    this.timeout(0);
+    testcount++;
+    shared.basictest(si, done);
+  });
+
+  it('close', function(done){
+    this.timeout(0);
+    shared.closetest(si, testcount, done);
+  });
+});
+
 
 function extratest(si) {
-  console.log('EXTRA')
-  si.__testcount++
+  console.log('EXTRA');
+  si.__testcount++;
 }
+
+
