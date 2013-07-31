@@ -1,5 +1,5 @@
 {
-  "name": "seneca-redis",
+  "name": "seneca-redis-store",
   "version": "0.0.3",
   "description": "Redis storage layer for Seneca framework",
   "main": "lib/redis-store.js",
