@@ -1,6 +1,6 @@
 {
   "name": "seneca-redis-store",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Redis storage layer for Seneca framework",
   "main": "lib/redis-store.js",
   "scripts": {
@@ -16,20 +16,21 @@
     "plugin"
   ],
   "author": "Marius Ursache",
-  "contributors": ["Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"],
+  "contributors": [
+    "Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"
+  ],
   "license": "MIT",
   "dependencies": {
-    "seneca":         ">=0.5.9",
-    "redis":          ">=0.8.0",
-    "underscore":     "1.1.x",
-    "node-uuid":      "*"
+    "seneca": ">=0.5.9",
+    "redis": ">=0.8.0",
+    "underscore": "~1.6.0",
+    "uuid": "~1.4.1"
   },
-
   "devDependencies": {
-    "expresso":"*",
-    "vows":"*",
-    "async":"*",
-    "eyes":"*",
-    "gex":"*"
+    "expresso": "*",
+    "vows": "*",
+    "async": "*",
+    "eyes": "*",
+    "gex": "*"
   }
 }
