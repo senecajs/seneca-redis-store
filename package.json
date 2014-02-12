@@ -1,35 +1,40 @@
 {
   "name": "seneca-redis-store",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Redis storage layer for Seneca framework",
-  "main": "lib/redis-store.js",
+  "main": "redis-store.js",
   "scripts": {
-    "test": "mocha test/redis.test.js"
+    "test": "node_modules/.bin/mocha test/*.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bamse16/seneca-redis.git"
+    "url": "git://github.com/bamse16/seneca-redis-store.git"
   },
   "keywords": [
     "seneca",
+    "data",
+    "store",
     "redis",
     "plugin"
   ],
   "author": "Marius Ursache",
-  "contributors": ["Peter Elger <elger.peter@gmail.com> (http://peterelger.com/)"],
+  "contributors": [
+    "Peter Elger (http://peterelger.com/)",
+    "Alan Bradley (http://gangleri.net/)",
+    "Richard Rodger (http://richardrodger.com/)"
+  ],
   "license": "MIT",
   "dependencies": {
-    "seneca":         ">=0.5.9",
-    "redis":          ">=0.8.0",
-    "underscore":     "1.1.x",
-    "node-uuid":      "*"
+    "redis": "0.10.x",
+    "node-uuid": "1.4.x",
+    "underscore": "1.6.x"
   },
-
+  "peerDependencies": {
+    "seneca": "*"
+  },
   "devDependencies": {
-    "expresso":"*",
-    "vows":"*",
-    "async":"*",
-    "eyes":"*",
-    "gex":"*"
+    "seneca": "0.5.x",
+    "mocha": "1.17.x",
+    "async": "0.2.x"
   }
 }

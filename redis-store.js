@@ -1,6 +1,6 @@
 /*jslint node: true */
 /*
- * Copyright (c) 2010-2013 <author>, MIT License 
+/* Copyright (c) 2012 Marius Ursache
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -20,7 +20,7 @@
 var assert = require("assert");
 var _ = require('underscore');
 var redis = require('redis');
-var uuid = require('uuid');
+var uuid = require('node-uuid');
 
 var NAME = "redis-store";
 var MIN_WAIT = 16;
