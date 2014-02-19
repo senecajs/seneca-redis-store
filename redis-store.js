@@ -132,7 +132,6 @@ module.exports = function(opts) {
   }
 
 
-
   /**
    * the simple db store interface returned to seneca
    */
@@ -221,7 +220,7 @@ module.exports = function(opts) {
       q.limit$ = 1;
 
       if (!q.id) {
-        list(args, function(err, list) {
+        store.list(args, function(err, list) {
           if (!error(args, err, cb)) {
             var ent = list[0] || null;
             seneca.log(args.tag$, 'load', ent);
