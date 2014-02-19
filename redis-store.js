@@ -223,10 +223,9 @@ module.exports = function(opts) {
       if (!q.id) {
         list(args, function(err, list) {
           if (!error(args, err, cb)) {
-            if (list.length > 0)
-              cb(null, list[0]);
-            else
-              db(null);
+            var ent = list[0] || null;
+            seneca.log(args.tag$, 'load', ent);
+            cb(err, ent ? ent : null )
           }
         });
       }
@@ -235,9 +234,14 @@ module.exports = function(opts) {
           if (!error(args, err, cb)) {
             dbConn.hget(table, q.id, function(err, row) {
               if (!error(args, err, cb)) {
-                var ent = makeent(qent, row, objMap);
-                seneca.log(args.tag$, 'load', ent);
-                cb(null, ent);
+                if (!row) {
+                  cb(null, null);
+                }
+                else {
+                  var ent = makeent(qent, row, objMap);
+                  seneca.log(args.tag$, 'load', ent);
+                  cb(null, ent);
+                }
               }
             });
           }
