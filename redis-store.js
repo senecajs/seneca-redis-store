@@ -82,7 +82,7 @@ module.exports = function(opts) {
           function(){
             reconnect(args);
           }, waitmillis);
-      } 
+      }
       else {
         waitmillis = MIN_WAIT;
         seneca.log(null, 'reconnect ok');
@@ -106,7 +106,7 @@ module.exports = function(opts) {
     var conf = spec;
     connectSpec = spec;
 
-    if (_.isString(spec)) { 
+    if (_.isString(spec)) {
       conf = {};
       var urlM = /^redis:\/\/((.*?)@)?(.*?)(:?(\d+))$/.exec(spec);
       conf.host = urlM[3];
@@ -158,7 +158,7 @@ module.exports = function(opts) {
       cb(null);
     },
 
-    
+
 
     /**
      * save the data as specified in the entitiy block on the arguments object
@@ -170,14 +170,19 @@ module.exports = function(opts) {
       assert(args);
       assert(cb);
       assert(args.ent);
-      
+
       var ent = args.ent;
       var q = args.q;
       var table = tablename(ent);
       var entp = {};
 
       if (!ent.id) {
-        ent.id = uuid();
+        if( ent.id$ ) {
+          ent.id = ent.id$;
+        }
+        else {
+          ent.id = uuid();
+        }
       }
 
       entp = makeentp(ent);
@@ -215,17 +220,29 @@ module.exports = function(opts) {
 
       q.limit$ = 1;
 
-      loadMap(dbConn, table, function(err, objMap) {
-        if (!error(args, err, cb)) {
-          dbConn.hget(table, qent.id, function(err, row) {
-            if (!error(args, err, cb)) {
-              var ent = makeent(qent, row, objMap);
-              seneca.log(args.tag$, 'load', ent);
-              cb(null, ent);
-            }
-          });
-        }
-      });
+      if (!q.id) {
+        list(args, function(err, list) {
+          if (!error(args, err, cb)) {
+            if (list.length > 0)
+              cb(null, list[0]);
+            else
+              db(null);
+          }
+        });
+      }
+      else {
+        loadMap(dbConn, table, function(err, objMap) {
+          if (!error(args, err, cb)) {
+            dbConn.hget(table, q.id, function(err, row) {
+              if (!error(args, err, cb)) {
+                var ent = makeent(qent, row, objMap);
+                seneca.log(args.tag$, 'load', ent);
+                cb(null, ent);
+              }
+            });
+          }
+        });
+      }
     },
 
 
@@ -233,7 +250,7 @@ module.exports = function(opts) {
     /**
      * return a list of object based on the supplied query, if no query is supplied
      * then all items are selected
-     * 
+     *
      * Notes: trivial implementation and unlikely to perform well due to list copy
      *        also only takes the first page of results from simple DB should in fact
      *        follow paging model
@@ -287,7 +304,7 @@ module.exports = function(opts) {
 
     /**
      * delete an item - fix this
-     * 
+     *
      * params
      * args - of the form { ent: { id: , ..entitiy data..} }
      * cb - callback
@@ -309,7 +326,7 @@ module.exports = function(opts) {
             cb(null, result);
           }
         });
-      } 
+      }
       else if(!_.isEmpty(q)) {
         store.list(args, function(err, elements) {
           var redisArgs = _.pluck(elements, 'id');
@@ -353,7 +370,7 @@ module.exports = function(opts) {
     configure(opts, function(err) {
       if (err) {
         return seneca.fail({code:'entity/configure', store:store.name, error:err, desc:desc}, done);
-      } 
+      }
       else done();
     });
   });
@@ -379,7 +396,7 @@ var makeentp = function(ent) {
   fields.forEach(function(field){
     if(_.isDate(ent[field]) || _.isObject(ent[field])) {
       entp[field] = JSON.stringify(ent[field]);
-    } 
+    }
     else {
       entp[field] = ent[field];
     }
@@ -402,10 +419,10 @@ var makeent = function(ent, row, objMap) {
       if (!_.isUndefined(row[field]) && !_.isUndefined(objMap.map[field])) {
         if (objMap.map[field] === OBJECT_TYPE_STATIC) {
           entp[field] = row[field];
-        } 
+        }
         else if (objMap.map[field] === OBJECT_TYPE_OBJECT) {
           entp[field] = JSON.parse(row[field]);
-        } 
+        }
         else if (objMap.map[field] === OBJECT_TYPE_DATE) {
           entp[field] = new Date(JSON.parse(row[field]));
         }
@@ -427,7 +444,7 @@ var determineObjectMap = function(ent){
   fields.forEach(function(field){
     if (_.isDate(ent[field])) {
       map[field] = OBJECT_TYPE_DATE;
-    } 
+    }
     else if (_.isObject(ent[field])) {
       map[field] = OBJECT_TYPE_OBJECT;
     }
@@ -440,7 +457,7 @@ var determineObjectMap = function(ent){
 
   if(!_.isUndefined(globalObjectMap[objectName])  && _.size(objectMap.map) < _.size(globalObjectMap[objectName].map)) {
     objectMap = globalObjectMap[objectName];
-  } 
+  }
   else {
     globalObjectMap[objectName] = objectMap;
   }
