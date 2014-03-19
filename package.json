@@ -1,6 +1,6 @@
 {
   "name": "seneca-redis-store",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Redis storage layer for Seneca framework",
   "main": "redis-store.js",
   "scripts": {
@@ -21,20 +21,21 @@
   "contributors": [
     "Peter Elger (http://peterelger.com/)",
     "Alan Bradley (http://gangleri.net/)",
-    "Richard Rodger (http://richardrodger.com/)"
+    "Richard Rodger (http://richardrodger.com/)",
+    "Chico Charlesworth (https://twitter.com/ccharlesworth)"
   ],
   "license": "MIT",
   "dependencies": {
-    "redis": "0.10.x",
-    "node-uuid": "1.4.x",
-    "underscore": "1.6.x"
+    "redis": "~0.10.0",
+    "node-uuid": "~1.4.1",
+    "underscore": "~1.6.0"
   },
   "peerDependencies": {
     "seneca": "*"
   },
   "devDependencies": {
-    "seneca": "0.5.x",
-    "mocha": "1.17.x",
-    "async": "0.2.x"
+    "seneca": "~0.5.15",
+    "mocha": "~1.17.1",
+    "async": "~0.2.10"
   }
 }
