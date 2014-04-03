@@ -486,11 +486,28 @@ var loadMap = function(dbConn, key, cb){
 
 
 
-var saveMap = function(dbConn, objectMap, cb){
+var saveMap = function(dbConn, newObjectMap, cb) {
+
   var table  = 'seneca_object_map';
-  var key = objectMap.id;
-  var savedObject = JSON.stringify(objectMap);
-  dbConn.hset(table, key, savedObject, cb);
+  var key = newObjectMap.id;
+
+  loadMap(dbConn, key, function(err, existingObjMap) {
+    if(err) { return cb(err, undefined); }
+
+    var mergedObjectMap = newObjectMap;
+
+    if(existingObjMap) {
+      for(var attr in newObjectMap) {
+        if(newObjectMap.hasOwnProperty(attr)) {
+          mergedObjectMap[attr] = newObjectMap[attr]
+        }
+      }
+    }
+
+    var savedObject = JSON.stringify(mergedObjectMap);
+    dbConn.hset(table, key, savedObject, cb);
+
+  });
 };
 
 
