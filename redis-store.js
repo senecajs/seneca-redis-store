@@ -126,6 +126,12 @@ module.exports = function(opts) {
       });
     }
 
+    if(_.has(conf, 'db')){
+      dbConn.select(conf.db, function(err){
+        seneca.log({tag$:'selected db'}, 'selected db ' + conf.db);
+      });
+    }
+
     seneca.log({tag$:'init'}, 'db '+conf.host+' opened.');
     seneca.log.debug('init', 'db open', spec);
     cb(null);
