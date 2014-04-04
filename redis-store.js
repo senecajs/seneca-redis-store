@@ -496,10 +496,11 @@ var saveMap = function(dbConn, newObjectMap, cb) {
 
     var mergedObjectMap = newObjectMap;
 
-    if(existingObjMap) {
-      for(var attr in newObjectMap) {
-        if(newObjectMap.hasOwnProperty(attr)) {
-          mergedObjectMap[attr] = newObjectMap[attr]
+    if(existingObjMap && existingObjMap.map) {
+      mergedObjectMap = existingObjMap;
+      for(var attr in newObjectMap.map) {
+        if(newObjectMap.map.hasOwnProperty(attr)) {
+          mergedObjectMap.map[attr] = newObjectMap.map[attr]
         }
       }
     }
