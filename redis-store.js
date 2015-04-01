@@ -419,6 +419,7 @@ var makeent = function(ent, row, objMap) {
   var entp;
   var fields;
 
+  if (!objMap) objMap = { map:{} };
   row = JSON.parse(row);
   fields = _.keys(row);
 
