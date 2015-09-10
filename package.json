@@ -34,8 +34,9 @@
     "seneca": "*"
   },
   "devDependencies": {
-    "seneca": "~0.5.15",
+    "async": "~0.2.10",
     "mocha": "~1.17.1",
-    "async": "~0.2.10"
+    "seneca": "~0.5.15",
+    "seneca-store-test": "^0.2.2"
   }
 }

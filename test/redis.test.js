@@ -7,8 +7,7 @@
 
 var seneca = require('seneca');
 var async = require('async');
-var shared = seneca.test.store.shared;
-
+var shared = require('seneca-store-test')
 
 
 var si = seneca();
@@ -49,5 +48,3 @@ function extratest(si,done) {
 
   si.__testcount++;
 }
-
-
