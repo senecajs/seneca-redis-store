@@ -4,7 +4,7 @@
   "description": "Redis storage layer for Seneca framework",
   "main": "redis-store.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha test/*.test.js"
+    "test": "node_modules/.bin/lab test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,8 @@
     "Peter Elger (http://peterelger.com/)",
     "Alan Bradley (http://gangleri.net/)",
     "Richard Rodger (http://richardrodger.com/)",
-    "Chico Charlesworth (https://twitter.com/ccharlesworth)"
+    "Chico Charlesworth (https://twitter.com/ccharlesworth)",
+    "Marco Piraccini (https://github.com/marcopiraccini)"
   ],
   "license": "MIT",
   "dependencies": {
@@ -35,7 +36,8 @@
   },
   "devDependencies": {
     "async": "~0.2.10",
-    "mocha": "~1.17.1",
+    "code": "^1.5.0",
+    "lab": "^5.16.0",
     "seneca": "~0.5.15",
     "seneca-store-test": "^0.2.2"
   }
