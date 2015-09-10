@@ -230,7 +230,7 @@ module.exports = function(opts) {
           if (!error(args, err, cb)) {
             var ent = list[0] || null;
             seneca.log(args.tag$, 'load', ent);
-            cb(err, ent ? ent : null )
+            cb(err, ent ? ent : null );
           }
         });
       }
@@ -324,7 +324,6 @@ module.exports = function(opts) {
       assert(cb);
       assert(args.qent);
       assert(args.q);
-
       var qent = args.qent;
       var q = args.q;
       var table = tablename(qent);
@@ -332,18 +331,19 @@ module.exports = function(opts) {
       if (q.all$) {
         dbConn.del(table, function(err, result) {
           if (!error(args, err, cb)) {
-            cb(null, result);
+            cb(null, [result]);
           }
         });
       }
       else if(!_.isEmpty(q)) {
+
         store.list(args, function(err, elements) {
           var redisArgs = _.pluck(elements, 'id');
           redisArgs.unshift(table);
 
           dbConn.hdel(redisArgs, function(err, result) {
             if (!error(args, err, cb)) {
-              cb(null, result);
+              cb(null, [result]);
             }
           });
         });
@@ -506,7 +506,7 @@ var saveMap = function(dbConn, newObjectMap, cb) {
       mergedObjectMap = existingObjMap;
       for(var attr in newObjectMap.map) {
         if(newObjectMap.map.hasOwnProperty(attr)) {
-          mergedObjectMap.map[attr] = newObjectMap.map[attr]
+          mergedObjectMap.map[attr] = newObjectMap.map[attr];
         }
       }
     }
@@ -516,5 +516,3 @@ var saveMap = function(dbConn, newObjectMap, cb) {
 
   });
 };
-
-
