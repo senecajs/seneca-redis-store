@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bamse16/seneca-redis-store.git"
+    "url": "git://github.com/nearform/seneca-redis-store.git"
   },
   "keywords": [
     "seneca",
