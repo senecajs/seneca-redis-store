@@ -11,7 +11,7 @@ var lab = exports.lab = Lab.script();
 
 var si = seneca();
 
-si.use('..', { host:'localhost', port:6379});
+si.use('..', { uri: 'redis://localhost:6379' });
 si.__testcount = 0;
 var testcount = 0;
 
