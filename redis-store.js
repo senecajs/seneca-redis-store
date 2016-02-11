@@ -106,25 +106,20 @@ module.exports = function(opts) {
     var conf = spec;
     connectSpec = spec;
 
-    if (_.isString(spec)) {
-      conf = {};
-      var urlM = /^redis:\/\/((.*?)@)?(.*?)(:?(\d+))$/.exec(spec);
-      conf.host = urlM[3];
-      conf.password = urlM[2];
-      conf.port = urlM[5];
-      conf.port = conf.port ? parseInt(conf.port,10) : null;
+    if (_.isString(conf)) {
+      dbConn = redis.createClient(conf);
+      seneca.log({tag$:'init'}, 'db '+conf+' opened.');
+    } else if (_.has(spec, 'uri')) {
+      dbConn = redis.createClient(conf.uri, conf.options);
+      seneca.log({tag$:'init'}, 'db '+conf.uri+' opened.');
+    } else {
+      dbConn = redis.createClient();
+      seneca.log({tag$:'init'}, 'db localhost opened.');
     }
 
-    dbConn = redis.createClient(conf.port, conf.host);
     dbConn.on('error', function(err){
       seneca.fail({code: "seneca-redis/configure", message: err.message});
     });
-
-    if(_.has(conf, 'auth') && !_.isEmpty(conf.auth)){
-      dbConn.auth(conf.auth, function(err, message){
-        seneca.log({tag$:'init'}, 'authed to ' + conf.host);
-      });
-    }
 
     if(_.has(conf, 'db')){
       dbConn.select(conf.db, function(err){
@@ -132,7 +127,6 @@ module.exports = function(opts) {
       });
     }
 
-    seneca.log({tag$:'init'}, 'db '+conf.host+' opened.');
     seneca.log.debug('init', 'db open', spec);
     cb(null);
   }
@@ -230,7 +224,7 @@ module.exports = function(opts) {
           if (!error(args, err, cb)) {
             var ent = list[0] || null;
             seneca.log(args.tag$, 'load', ent);
-            cb(err, ent ? ent : null )
+            cb(err, ent ? ent : null );
           }
         });
       }
@@ -324,7 +318,6 @@ module.exports = function(opts) {
       assert(cb);
       assert(args.qent);
       assert(args.q);
-
       var qent = args.qent;
       var q = args.q;
       var table = tablename(qent);
@@ -332,18 +325,19 @@ module.exports = function(opts) {
       if (q.all$) {
         dbConn.del(table, function(err, result) {
           if (!error(args, err, cb)) {
-            cb(null, result);
+            cb(null, [result]);
           }
         });
       }
       else if(!_.isEmpty(q)) {
+
         store.list(args, function(err, elements) {
           var redisArgs = _.pluck(elements, 'id');
           redisArgs.unshift(table);
 
           dbConn.hdel(redisArgs, function(err, result) {
             if (!error(args, err, cb)) {
-              cb(null, result);
+              cb(null, [result]);
             }
           });
         });
@@ -506,7 +500,7 @@ var saveMap = function(dbConn, newObjectMap, cb) {
       mergedObjectMap = existingObjMap;
       for(var attr in newObjectMap.map) {
         if(newObjectMap.map.hasOwnProperty(attr)) {
-          mergedObjectMap.map[attr] = newObjectMap.map[attr]
+          mergedObjectMap.map[attr] = newObjectMap.map[attr];
         }
       }
     }
@@ -516,5 +510,3 @@ var saveMap = function(dbConn, newObjectMap, cb) {
 
   });
 };
-
-

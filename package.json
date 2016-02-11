@@ -1,14 +1,14 @@
 {
   "name": "seneca-redis-store",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "Redis storage layer for Seneca framework",
   "main": "redis-store.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha test/*.test.js"
+    "test": "node_modules/.bin/lab test/*.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bamse16/seneca-redis-store.git"
+    "url": "git://github.com/nearform/seneca-redis-store.git"
   },
   "keywords": [
     "seneca",
@@ -22,20 +22,23 @@
     "Peter Elger (http://peterelger.com/)",
     "Alan Bradley (http://gangleri.net/)",
     "Richard Rodger (http://richardrodger.com/)",
-    "Chico Charlesworth (https://twitter.com/ccharlesworth)"
+    "Chico Charlesworth (https://twitter.com/ccharlesworth)",
+    "Marco Piraccini (https://github.com/marcopiraccini)"
   ],
   "license": "MIT",
   "dependencies": {
-    "redis": "~0.10.0",
     "node-uuid": "~1.4.1",
+    "redis": "^2.2.3",
     "underscore": "~1.6.0"
   },
   "peerDependencies": {
     "seneca": "*"
   },
   "devDependencies": {
-    "seneca": "~0.5.15",
-    "mocha": "~1.17.1",
-    "async": "~0.2.10"
+    "async": "~0.2.10",
+    "code": "^1.5.0",
+    "lab": "^5.16.0",
+    "seneca": "^0.6.5",
+    "seneca-store-test": "^0.2.2"
   }
 }
