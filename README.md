@@ -18,7 +18,7 @@ seneca-redis-store's source can be read in an annotated fashion by,
 - running `npm run annotate`
 - viewing [online](http://senecajs.github.io/seneca-redis-store/doc/redis-store.html).
 
-The annotated source can be found locally at [./doc/redis-store.html]().
+The annotated source can be found locally at `./doc/redis-store.html`.
 
 If you're using this module, and need help, you can:
 
