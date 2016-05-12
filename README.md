@@ -2,14 +2,13 @@
 > A [Seneca.js][] data storage plugin
 
 # seneca-redis-store
-
 [![npm version][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
 [![Coverage Status][coverage-badge]][coverage-url]
-[![Code Climate][codeclimate-badge]][codeclimate-url]
 [![Dependency Status][david-badge]][david-url]
 [![Gitter][gitter-badge]][gitter-url]
 
+## Description
 
 A storage engine that uses [redis][redis-url] to persist data.
 
@@ -29,6 +28,8 @@ If you're using this module, and need help, you can:
 If you are new to Seneca in general, please take a look at [senecajs.org][]. We have everything from
 tutorials to sample apps to help get you up and running quickly.
 
+### Seneca compatibility
+Supports Seneca versions **1.x** and **2.x**
 
 ## Install
 To install, simply use npm. Remember you will need to install [Seneca.js][] if you haven't already.
@@ -39,13 +40,6 @@ npm install seneca-redis-store
 ```
 
 You also need redis running locally. Please visit [redis][redis-url] for more info about how to install and run redis
-
-## Test
-To run tests, simply use npm:
-
-```
-npm run test
-```
 
 ## Quick Example
 
@@ -97,8 +91,16 @@ entity.remove$({id: ... }, function (err, entity) { ... })
 The [Senecajs org][] encourage open participation. If you feel you can help in any way, be it with
 documentation, examples, extra testing, or new features please get in touch.
 
+## Test
+To run tests, simply use npm:
+
+```
+npm run test
+```
+
 ## License
-Copyright Marius Ursache and other contributors 2016, Licensed under [MIT][].
+Copyright (c) 2016, Marius Ursache and other contributors.
+Licensed under [MIT][].
 
 [npm-badge]: https://img.shields.io/npm/v/seneca-redis-store.svg
 [npm-url]: https://npmjs.com/package/seneca-redis-store
@@ -110,11 +112,9 @@ Copyright Marius Ursache and other contributors 2016, Licensed under [MIT][].
 [coverage-url]: https://coveralls.io/github/senecajs/seneca-redis-store?branch=master
 [david-badge]: https://david-dm.org/senecajs/seneca-redis-store.svg
 [david-url]: https://david-dm.org/senecajs/seneca-redis-store
-
 [gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
 [gitter-url]: https://gitter.im/senecajs/seneca
-
-[MIT]: ./LICENSE
+[MIT]: ./LICENSE.txt
 [Senecajs org]: https://github.com/senecajs/
 [Seneca.js]: https://www.npmjs.com/package/seneca
 [senecajs.org]: http://senecajs.org/
