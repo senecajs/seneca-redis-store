@@ -1,0 +1,5 @@
+redis:
+  build: ./docker
+  ports:
+    - "6379:6379"
+    
