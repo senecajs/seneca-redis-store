@@ -20,7 +20,7 @@ describe('redis-basic', function () {
   before({}, function (done) {
     si.ready(done)
   })
-  
+
   Shared.basictest({
     seneca: si,
     script: lab

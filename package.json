@@ -58,7 +58,7 @@
     "lab": "6.x.x",
     "seneca": "plugin",
     "seneca-entity": "0.0.1",
-    "seneca-store-test": "1.x.x"
+    "seneca-store-test": "1.0.0"
   },
   "files": [
     "README.md",
