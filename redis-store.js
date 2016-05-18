@@ -4,7 +4,7 @@ var Assert = require('assert')
 var _ = require('lodash')
 var Redis = require('redis')
 var Uuid = require('node-uuid')
-var Cryo = require('cryo')
+var NOSJ = require('nosj')
 
 var NAME = 'redis-store'
 var MIN_WAIT = 16
@@ -156,7 +156,7 @@ module.exports = function (opts) {
         }
       }
 
-      entp = Cryo.stringify(ent.data$(false))
+      entp = NOSJ.stringify(ent.data$(false))
 
       // var objectMap = determineObjectMap(ent)
       dbConn.hset(table, ent.id, entp, function (err, result) {
@@ -201,7 +201,7 @@ module.exports = function (opts) {
               cb(null, null)
             }
             else {
-              var ent = qent.make$(Cryo.parse(row))
+              var ent = qent.make$(NOSJ.parse(row))
               seneca.log(args.tag$, 'load', ent)
               cb(null, ent)
             }
@@ -241,7 +241,7 @@ module.exports = function (opts) {
         if (!error(args, err, cb)) {
           var list = []
           _.each(results, function (value, key) {
-            var ent = qent.make$(Cryo.parse(value))
+            var ent = qent.make$(NOSJ.parse(value))
             list.push(ent)
           })
 
@@ -278,7 +278,14 @@ module.exports = function (opts) {
       var q = args.q
       var table = tablename(qent)
 
-      if (q.all$) {
+      if (q.id) {
+        dbConn.hdel(table, q.id, function (err, result) {
+          if (!error(args, err, cb)) {
+            cb(null, [result])
+          }
+        })
+      }
+      else if (q.all$) {
         dbConn.del(table, function (err, result) {
           if (!error(args, err, cb)) {
             cb(null, [result])

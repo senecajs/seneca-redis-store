@@ -43,9 +43,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "cryo": "0.0.6",
     "lodash": "^4.4.0",
     "node-uuid": "~1.4.1",
+    "nosj": "1.0.1",
     "redis": "^2.2.3"
   },
   "peerDependencies": {
