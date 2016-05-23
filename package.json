@@ -1,10 +1,10 @@
 {
   "name": "seneca-redis-store",
-  "version": "0.0.8",
+  "version": "1.0.0",
   "description": "Redis storage layer for Seneca framework",
   "main": "redis-store.js",
   "scripts": {
-    "test": "lab test/*.test.js -r console -v -L -m 3000 -t 83 $LAB_FLAGS",
+    "test": "lab test/*.test.js -r console -v -L -m 3000 -t 81 $LAB_FLAGS",
     "test:node6": "LAB_FLAGS='--leaks' && npm t",
     "lint": "lab -dL",
     "coverage": "lab test -v -r lcov | coveralls",
@@ -31,7 +31,8 @@
     "Richard Rodger (http://richardrodger.com/)",
     "Chico Charlesworth (https://twitter.com/ccharlesworth)",
     "Marco Piraccini (https://github.com/marcopiraccini)",
-    "Cristian Kiss (https://github.com/ckiss)"
+    "Cristian Kiss (https://github.com/ckiss)",
+    "Mihai Dima (https://github.com/mihaidma)"
   ],
   "homepage": "https://github.com/senecajs/seneca-redis-store",
   "bugs": {
@@ -42,13 +43,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.4.0",
-    "node-uuid": "~1.4.1",
-    "nosj": "1.0.1",
-    "redis": "^2.2.3"
-  },
-  "peerDependencies": {
-    "seneca": "*"
+    "lodash": "4.x.x",
+    "node-uuid": "1.x.x",
+    "nosj": "1.x.x",
+    "redis": "2.5.x"
   },
   "devDependencies": {
     "code": "1.x.x",
