@@ -43,9 +43,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "lodash": "4.x.x",
-    "node-uuid": "1.x.x",
-    "redis": "2.5.x"
+    "lodash": "^4.4.0",
+    "node-uuid": "~1.4.1",
+    "nosj": "1.0.1",
+    "redis": "^2.2.3"
   },
   "peerDependencies": {
     "seneca": "*"

@@ -4,15 +4,11 @@ var Assert = require('assert')
 var _ = require('lodash')
 var Redis = require('redis')
 var Uuid = require('node-uuid')
+var NOSJ = require('nosj')
 
 var NAME = 'redis-store'
 var MIN_WAIT = 16
 var MAX_WAIT = 65336
-var OBJECT_TYPE_STATIC = 's'
-var OBJECT_TYPE_OBJECT = 'o'
-var OBJECT_TYPE_DATE = 'd'
-
-var globalObjectMap = {}
 
 module.exports = function (opts) {
   var seneca = this
@@ -160,17 +156,13 @@ module.exports = function (opts) {
         }
       }
 
-      entp = makeentp(ent)
+      entp = NOSJ.stringify(ent.data$(false))
 
-      var objectMap = determineObjectMap(ent)
+      // var objectMap = determineObjectMap(ent)
       dbConn.hset(table, ent.id, entp, function (err, result) {
         if (!error(args, err, cb)) {
-          saveMap(dbConn, objectMap, function (err, result) {
-            if (!error(args, err, cb)) {
-              seneca.log(args.tag$, 'save', result)
-              cb(null, ent)
-            }
-          })
+          seneca.log(args.tag$, 'save', result)
+          cb(null, ent)
         }
       })
     },
@@ -203,20 +195,16 @@ module.exports = function (opts) {
         })
       }
       else {
-        loadMap(dbConn, table, function (err, objMap) {
+        dbConn.hget(table, q.id, function (err, row) {
           if (!error(args, err, cb)) {
-            dbConn.hget(table, q.id, function (err, row) {
-              if (!error(args, err, cb)) {
-                if (!row) {
-                  cb(null, null)
-                }
-                else {
-                  var ent = makeent(qent, row, objMap)
-                  seneca.log(args.tag$, 'load', ent)
-                  cb(null, ent)
-                }
-              }
-            })
+            if (!row) {
+              cb(null, null)
+            }
+            else {
+              var ent = qent.make$(NOSJ.parse(row))
+              seneca.log(args.tag$, 'load', ent)
+              cb(null, ent)
+            }
           }
         })
       }
@@ -249,29 +237,25 @@ module.exports = function (opts) {
       var q = args.q
       var table = tablename(qent)
 
-      loadMap(dbConn, table, function (err, objMap) {
+      dbConn.hgetall(table, function (err, results) {
         if (!error(args, err, cb)) {
-          dbConn.hgetall(table, function (err, results) {
-            if (!error(args, err, cb)) {
-              var list = []
-              _.each(results, function (value, key) {
-                var ent = makeent(qent, value, objMap)
-                list.push(ent)
-              })
-
-              if (!_.isEmpty(q)) {
-                list = _.filter(list, function (elem, b, c) {
-                  var match = true
-                  _.each(q, function (value, key) {
-                    var computed = (elem[key] === value)
-                    match = match && computed
-                  })
-                  return match
-                })
-              }
-              cb(null, list)
-            }
+          var list = []
+          _.each(results, function (value, key) {
+            var ent = qent.make$(NOSJ.parse(value))
+            list.push(ent)
           })
+
+          if (!_.isEmpty(q)) {
+            list = _.filter(list, function (elem, b, c) {
+              var match = true
+              _.each(q, function (value, key) {
+                var computed = (elem[key] === value)
+                match = match && computed
+              })
+              return match
+            })
+          }
+          cb(null, list)
         }
       })
     },
@@ -294,7 +278,14 @@ module.exports = function (opts) {
       var q = args.q
       var table = tablename(qent)
 
-      if (q.all$) {
+      if (q.id) {
+        dbConn.hdel(table, q.id, function (err, result) {
+          if (!error(args, err, cb)) {
+            cb(null, [result])
+          }
+        })
+      }
+      else if (q.all$) {
         dbConn.del(table, function (err, result) {
           if (!error(args, err, cb)) {
             cb(null, [result])
@@ -356,120 +347,4 @@ module.exports = function (opts) {
 var tablename = function (entity) {
   var canon = entity.canon$({object: true})
   return (canon.base ? canon.base + '_' : '') + canon.name
-}
-
-
-var makeentp = function (ent) {
-  var entp = {}
-  var fields = ent.fields$()
-
-  fields.forEach(function (field) {
-    if (_.isDate(ent[field]) || _.isObject(ent[field])) {
-      entp[field] = JSON.stringify(ent[field])
-    }
-    else {
-      entp[field] = ent[field]
-    }
-  })
-  return JSON.stringify(entp)
-}
-
-
-var makeent = function (ent, row, objMap) {
-  var entp
-  var fields
-
-  row = JSON.parse(row)
-  fields = _.keys(row)
-
-  if (!_.isUndefined(ent) && !_.isUndefined(row)) {
-    entp = {}
-    fields.forEach(function (field) {
-      if (!_.isUndefined(row[field]) && !_.isUndefined(objMap.map[field])) {
-        if (objMap.map[field] === OBJECT_TYPE_STATIC) {
-          entp[field] = row[field]
-        }
-        else if (objMap.map[field] === OBJECT_TYPE_OBJECT) {
-          entp[field] = JSON.parse(row[field])
-        }
-        else if (objMap.map[field] === OBJECT_TYPE_DATE) {
-          entp[field] = new Date(JSON.parse(row[field]))
-        }
-      }
-    })
-  }
-  return ent.make$(entp)
-}
-
-
-var determineObjectMap = function (ent) {
-  var fields = ent.fields$()
-  var objectName = tablename(ent)
-
-  var objectMap = {}
-  var map = {}
-
-  fields.forEach(function (field) {
-    if (_.isDate(ent[field])) {
-      map[field] = OBJECT_TYPE_DATE
-    }
-    else if (_.isObject(ent[field])) {
-      map[field] = OBJECT_TYPE_OBJECT
-    }
-    else {
-      map[field] = OBJECT_TYPE_STATIC
-    }
-  })
-
-  objectMap = {id: objectName, map: map}
-
-  if (!_.isUndefined(globalObjectMap[objectName]) && _.size(objectMap.map) < _.size(globalObjectMap[objectName].map)) {
-    objectMap = globalObjectMap[objectName]
-  }
-  else {
-    globalObjectMap[objectName] = objectMap
-  }
-
-  return objectMap
-}
-
-
-var loadMap = function (dbConn, key, cb) {
-  var table = 'seneca_object_map'
-
-  dbConn.hget(table, key, function (err, result) {
-    if (!err) {
-      var objectMap = JSON.parse(result)
-      cb(null, objectMap)
-    }
-    else {
-      cb(err, null)
-    }
-  })
-}
-
-
-var saveMap = function (dbConn, newObjectMap, cb) {
-  var table = 'seneca_object_map'
-  var key = newObjectMap.id
-
-  loadMap(dbConn, key, function (err, existingObjMap) {
-    if (err) {
-      return cb(err, undefined)
-    }
-
-    var mergedObjectMap = newObjectMap
-
-    if (existingObjMap && existingObjMap.map) {
-      mergedObjectMap = existingObjMap
-      for (var attr in newObjectMap.map) {
-        if (newObjectMap.map.hasOwnProperty(attr)) {
-          mergedObjectMap.map[attr] = newObjectMap.map[attr]
-        }
-      }
-    }
-
-    var savedObject = JSON.stringify(mergedObjectMap)
-    dbConn.hset(table, key, savedObject, cb)
-  })
 }
