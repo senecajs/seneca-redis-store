@@ -4,7 +4,7 @@
 # seneca-redis-store
 [![npm version][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
-[![Coverage Status][coverage-badge]][coverage-url]
+[![Coveralls][BadgeCoveralls]][Coveralls]
 [![Dependency Status][david-badge]][david-url]
 [![Gitter][gitter-badge]][gitter-url]
 
@@ -108,8 +108,8 @@ Licensed under [MIT][].
 [travis-url]: https://travis-ci.org/senecajs/seneca-redis-store
 [codeclimate-badge]: https://codeclimate.com/github/senecajs/seneca-redis-store/badges/gpa.svg
 [codeclimate-url]: https://codeclimate.com/github/senecajs/seneca-redis-store
-[coverage-badge]: https://coveralls.io/repos/senecajs/seneca-redis-store/badge.svg?branch=master&service=github
-[coverage-url]: https://coveralls.io/github/senecajs/seneca-redis-store?branch=master
+[Coveralls]: https://coveralls.io/github/senecajs/seneca-mem-store?branch=master
+[BadgeCoveralls]: https://coveralls.io/repos/github/senecajs/seneca-mem-store/badge.svg?branch=master
 [david-badge]: https://david-dm.org/senecajs/seneca-redis-store.svg
 [david-url]: https://david-dm.org/senecajs/seneca-redis-store
 [gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
