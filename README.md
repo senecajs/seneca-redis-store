@@ -29,7 +29,7 @@ If you are new to Seneca in general, please take a look at [senecajs.org][]. We 
 tutorials to sample apps to help get you up and running quickly.
 
 ### Seneca compatibility
-Supports Seneca versions **1.x** and **2.x**
+Supports Seneca versions **1.x** - **3.x**
 
 ## Install
 To install, simply use npm. Remember you will need to install [Seneca.js][] if you haven't already.
