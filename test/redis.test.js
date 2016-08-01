@@ -10,11 +10,11 @@ var describe = lab.describe
 
 var si = Seneca()
 
-si.use('..', {uri: 'redis://localhost:6379'})
-
 if (si.version >= '2.0.0') {
   si.use('seneca-entity')
 }
+
+si.use('..', {uri: 'redis://localhost:6379'})
 
 describe('redis-basic', function () {
   before({}, function (done) {
