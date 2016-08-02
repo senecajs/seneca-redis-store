@@ -1,6 +1,6 @@
-## WIP 1.1.0 
+## 1.0.1 2016-08-02
 
-* Dependencies update
+* Dependencies update to match Seneca dependencies
 
 ## 1.0.0 2016-05-23
 
