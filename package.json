@@ -4,8 +4,7 @@
   "description": "Redis storage layer for Seneca framework",
   "main": "redis-store.js",
   "scripts": {
-    "test": "lab test/*.test.js -r console -v -L -m 3000 -t 81 $LAB_FLAGS",
-    "test:node6": "LAB_FLAGS='--leaks' && npm t",
+    "test": "lab test/*.test.js -r console -v -L -m 3000 -t 80",
     "lint": "lab -dL",
     "coverage": "lab test -v -r lcov | coveralls",
     "annotate": "docco redis-store.js -o doc",
@@ -39,7 +38,7 @@
     "url": "https://github.com/senecajs/seneca-redis-store/issues"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.0.0"
   },
   "license": "MIT",
   "dependencies": {
