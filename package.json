@@ -59,7 +59,7 @@
     "seneca": "plugin",
     "pre-commit": "1.1.x",
     "seneca-entity": "1.2.x",
-    "seneca-store-test": "1.1.1"
+    "seneca-store-test": "1.0.0"
   },
   "files": [
     "README.md",
