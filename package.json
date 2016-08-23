@@ -7,7 +7,7 @@
     "test": "lab -v -P test -L -t 80",
     "coveralls": "lab -s -P test -r lcov | coveralls",
     "coverage": "lab -v -P test -L -t 80 -r html > coverage.html",
-    "annotate": "docco redis-store.js -o docs/annotated",
+    "annotate": "docco redis-store.js -o doc/annotated",
     "build": "docker-compose build",
     "start": "docker-compose up",
     "stop": "docker-compose kill"
@@ -31,7 +31,13 @@
     "Chico Charlesworth (https://twitter.com/ccharlesworth)",
     "Marco Piraccini (https://github.com/marcopiraccini)",
     "Cristian Kiss (https://github.com/ckiss)",
-    "Mihai Dima (https://github.com/mihaidma)"
+    "Mihai Dima (https://github.com/mihaidma)",
+    "Blain Smith (https://github.com/blainsmith)",
+    "Marius Ursache (https://github.com/bamse16)",
+    "Nicolas Herment (https://github.com/nherment)",
+    "Emer Rutherford (https://github.com/eeswr)",
+    "Shane Lacey (https://github.com/shanel262)",
+    "Matteo Collina (https://github.com/mcollina)"
   ],
   "homepage": "https://github.com/senecajs/seneca-redis-store",
   "bugs": {
@@ -55,7 +61,6 @@
     "eslint-plugin-hapi": "4.x.x",
     "eslint-plugin-standard": "2.x.x",
     "lab": "11.0.x",
-    "pre-commit": "1.1.3",
     "seneca": "plugin",
     "pre-commit": "1.1.x",
     "seneca-entity": "1.2.x",
