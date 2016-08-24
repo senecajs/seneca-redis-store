@@ -346,5 +346,5 @@ module.exports = function (opts) {
 
 var tablename = function (entity) {
   var canon = entity.canon$({object: true})
-  return (canon.base ? canon.base + '_' : '') + canon.name
+  return (canon.zone ? canon.zone + '_' : '') + (canon.base ? canon.base + '_' : '') + canon.name
 }
