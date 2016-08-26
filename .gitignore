@@ -20,3 +20,4 @@ npm-debug.log
 node_modules
 coverage
 doc/annotated
+docs/coverage.html
