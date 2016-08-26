@@ -114,7 +114,7 @@ Licensed under [MIT][].
 [david-url]: https://david-dm.org/senecajs/seneca-redis-store
 [gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
 [gitter-url]: https://gitter.im/senecajs/seneca
-[MIT]: ./LICENSE.txt
+[MIT]: ./LICENSE
 [Senecajs org]: https://github.com/senecajs/
 [Seneca.js]: https://www.npmjs.com/package/seneca
 [senecajs.org]: http://senecajs.org/
