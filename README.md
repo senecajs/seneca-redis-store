@@ -45,8 +45,7 @@ You also need redis running locally. Please visit [redis][redis-url] for more in
 
 **String Uri**
 ```js
-var Seneca = require("seneca")
-var seneca = Seneca()
+var seneca = require("seneca")()
 var opts = {
   'redis-store': 'redis://user:pass@host:port'
 }
@@ -54,8 +53,7 @@ var opts = {
 
 **String Uri with Redis Options**
 ```js
-var Seneca = require("seneca")
-var seneca = Seneca()
+var seneca = require("seneca")()
 var opts = {
   'redis-store': {
     uri: 'redis://user:pass@host:port',
@@ -63,9 +61,10 @@ var opts = {
   }
 }
 
-seneca.use('redis-store', opts);
 seneca.use("basic");
 seneca.use("entity");
+seneca.use('redis-store', opts);
+
 
 seneca.ready(function() {
   var apple = seneca.make$('fruit')
