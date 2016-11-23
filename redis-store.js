@@ -3,7 +3,7 @@
 var Assert = require('assert')
 var _ = require('lodash')
 var Redis = require('redis')
-var Uuid = require('node-uuid')
+var Uuid = require('uuid')
 var NOSJ = require('nosj')
 
 var NAME = 'redis-store'

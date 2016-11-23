@@ -49,9 +49,9 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "4.15.0",
-    "node-uuid": "1.4.7",
     "nosj": "1.0.1",
-    "redis": "2.6.2"
+    "redis": "2.6.2",
+    "uuid": "^3.0.0"
   },
   "devDependencies": {
     "code": "3.0.x",
