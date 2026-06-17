@@ -21,3 +21,4 @@ node_modules
 coverage
 doc/annotated
 docs/coverage.html
+package-lock.json
