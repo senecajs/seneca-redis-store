@@ -1,40 +1,13 @@
 ![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
 > A [Seneca.js][] data storage plugin
 
-# seneca-redis-store
-[![npm version][npm-badge]][npm-url]
-[![Build Status][travis-badge]][travis-url]
-[![Coveralls][BadgeCoveralls]][Coveralls]
-[![Dependency Status][david-badge]][david-url]
-[![Gitter][gitter-badge]][gitter-url]
+# @seneca/redis-store
 
-## Description
-
-A storage engine that uses [redis][redis-url] to persist data.
-
-seneca-redis-store's source can be read in an annotated fashion by,
-
-- running `npm run annotate`
-- viewing [online](http://senecajs.github.io/seneca-redis-store/doc/redis-store.html).
-
-The annotated source can be found locally at `./doc/redis-store.html`.
-
-If you're using this module, and need help, you can:
-
-- Post a [github issue][],
-- Tweet to [@senecajs][],
-- Ask on the [Gitter][gitter-url].
-
-If you are new to Seneca in general, please take a look at [senecajs.org][]. We have everything from
-tutorials to sample apps to help get you up and running quickly.
-
-### Seneca compatibility
-Supports Seneca versions **1.x** - **3.x**
-
-### Supported functionality
-All Seneca data store supported functionality is implemented in [seneca-store-test](https://github.com/senecajs/seneca-store-test) as a test suite. The tests represent the store functionality specifications.
+| ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
+|---|---|
 
 ## Install
+
 To install, simply use npm. Remember you will need to install [Seneca.js][] if you haven't already.
 
 ```
@@ -81,7 +54,42 @@ seneca.ready(function() {
 
 See the full list of available [Redis options].
 
-## Usage
+## More Examples
+
+See [test/](test/) for usage examples.
+
+## Motivation
+
+A storage engine that uses [redis][redis-url] to persist data.
+
+seneca-redis-store's source can be read in an annotated fashion by,
+
+- running `npm run annotate`
+- viewing [online](http://senecajs.github.io/seneca-redis-store/doc/redis-store.html).
+
+The annotated source can be found locally at `./doc/redis-store.html`.
+
+If you're using this module, and need help, you can:
+
+- Post a [github issue][],
+- Tweet to [@senecajs][],
+- Ask on the [Gitter][gitter-url].
+
+If you are new to Seneca in general, please take a look at [senecajs.org][]. We have everything from
+tutorials to sample apps to help get you up and running quickly.
+
+### Seneca compatibility
+Supports Seneca versions **1.x** - **3.x**
+
+### Supported functionality
+All Seneca data store supported functionality is implemented in [seneca-store-test](https://github.com/senecajs/seneca-store-test) as a test suite. The tests represent the store functionality specifications.
+
+## Support
+
+If you are having difficulty, open an issue on the GitHub repo.
+
+## API
+
 You don't use this module directly. It provides an underlying data storage engine for the Seneca entity API:
 
 ```js
@@ -96,20 +104,27 @@ entity.remove$({id: ... }, function (err, entity) { ... })
 ```
 
 ## Contributing
+
 The [Senecajs org][] encourage open participation. If you feel you can help in any way, be it with
 documentation, examples, extra testing, or new features please get in touch.
 
-## Test
+### Running tests
+
 To run tests, simply use npm:
 
 ```
 npm run test
 ```
 
-## License
-Copyright (c) 2016, Marius Ursache and other contributors.
-Licensed under [MIT][].
+## Background
 
+This plugin uses the [redis](https://github.com/NodeRedis/node_redis) driver.
+
+[![npm version][npm-badge]][npm-url]
+[![Build Status][travis-badge]][travis-url]
+[![Coveralls][BadgeCoveralls]][Coveralls]
+[![Dependency Status][david-badge]][david-url]
+[![Gitter][gitter-badge]][gitter-url]
 [npm-badge]: https://img.shields.io/npm/v/seneca-redis-store.svg
 [npm-url]: https://npmjs.com/package/seneca-redis-store
 [travis-badge]: https://travis-ci.org/senecajs/seneca-redis-store.svg
