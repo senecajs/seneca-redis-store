@@ -3,145 +3,118 @@
 
 # @seneca/redis-store
 
+A Seneca entity store that keeps entities in [Redis][redis-url]. Each
+entity type is a Redis hash; each entity is one field of that hash,
+holding the entity data as JSON. It works with Seneca 3 and with the
+Seneca 4 prerelease (`seneca@4.0.0-rc5`), together with `seneca-entity`.
+
+[![npm version][npm-badge]][npm-url]
+
 | ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
 |---|---|
 
 ## Install
 
-To install, simply use npm. Remember you will need to install [Seneca.js][] if you haven't already.
-
-```
-npm install seneca
-npm install seneca-redis-store
+```sh
+npm install seneca seneca-entity seneca-redis-store
 ```
 
-You also need redis running locally. Please visit [redis][redis-url] for more info about how to install and run redis
+The package is published on npm as `seneca-redis-store` (latest
+published version 1.1.0). The repository's `package.json` now names it
+`@seneca/redis-store`, but that scoped name has not been published yet,
+so install and `require` the unscoped name until it is. You need a
+running Redis server.
 
 ## Quick Example
 
-**String Uri**
 ```js
-var seneca = require("seneca")()
-var opts = {
-  'redis-store': 'redis://user:pass@host:port'
-}
-```
+const Seneca = require('seneca')
 
-**String Uri with Redis Options**
-```js
-var seneca = require("seneca")()
-var opts = {
-  'redis-store': {
-    uri: 'redis://user:pass@host:port',
-    options: {...}
-  }
-}
+const seneca = Seneca()
+  .use('seneca-entity')
+  .use('seneca-redis-store', { uri: 'redis://127.0.0.1:6379' })
 
-seneca.use("basic");
-seneca.use("entity");
-seneca.use('redis-store', opts);
-
-
-seneca.ready(function() {
-  var apple = seneca.make$('fruit')
+seneca.ready(function () {
+  const apple = seneca.make$('fruit')
   apple.name = 'Pink Lady'
   apple.price = 0.99
   apple.save$(function (err, apple) {
-    console.log("apple.id = " + apple.id)
+    console.log('apple.id = ' + apple.id)
+    seneca.close()
   })
 })
 ```
 
-See the full list of available [Redis options].
-
 ## More Examples
 
-See [test/](test/) for usage examples.
+* [Getting started](docs/tutorials/getting-started.md): a complete
+  program that saves, loads, lists and removes entities.
+* [Configure the connection](docs/how-to/configure-the-connection.md):
+  URI, client options, database number.
+* [Run the tests locally](docs/how-to/run-the-tests-locally.md): Docker
+  Redis and the test environment variables.
+* [Migrate from Seneca 3](docs/how-to/migrate-from-seneca-3.md).
+
+The full index is in [docs/README.md](docs/README.md).
 
 ## Motivation
 
-A storage engine that uses [redis][redis-url] to persist data.
-
-seneca-redis-store's source can be read in an annotated fashion by,
-
-- running `npm run annotate`
-- viewing [online](http://senecajs.github.io/seneca-redis-store/doc/redis-store.html).
-
-The annotated source can be found locally at `./doc/redis-store.html`.
-
-If you're using this module, and need help, you can:
-
-- Post a [github issue][],
-- Tweet to [@senecajs][],
-- Ask on the [Gitter][gitter-url].
-
-If you are new to Seneca in general, please take a look at [senecajs.org][]. We have everything from
-tutorials to sample apps to help get you up and running quickly.
-
-### Seneca compatibility
-Supports Seneca versions **1.x** - **3.x**
-
-### Supported functionality
-All Seneca data store supported functionality is implemented in [seneca-store-test](https://github.com/senecajs/seneca-store-test) as a test suite. The tests represent the store functionality specifications.
+Redis is a fast, widely deployed key value server. This plugin lets a
+Seneca application use it through the standard entity API, so business
+logic does not depend on the storage engine. See
+[How the store works](docs/explanation/how-the-store-works.md).
 
 ## Support
 
-If you are having difficulty, open an issue on the GitHub repo.
+* Open an issue on [GitHub][github issue].
+* Seneca documentation: [senecajs.org][].
+* This module is sponsored and supported by [Voxgig](https://www.voxgig.com).
 
 ## API
 
-You don't use this module directly. It provides an underlying data storage engine for the Seneca entity API:
+You do not call this plugin directly. It answers the entity messages
+that `seneca-entity` sends.
 
-```js
-var entity = seneca.make$('typename')
-entity.someproperty = "something"
-entity.anotherproperty = 100
-
-entity.save$(function (err, entity) { ... })
-entity.load$({id: ... }, function (err, entity) { ... })
-entity.list$({property: ... }, function (err, entity) { ... })
-entity.remove$({id: ... }, function (err, entity) { ... })
-```
+| Topic | Reference |
+| ----- | --------- |
+| Plugin options (`uri`, `options`, `db`, `minwait`, `maxwait`, `merge`) | [Options](docs/reference/options.md) |
+| Entity operations (`save$`, `load$`, `list$`, `remove$`, `native$`, close) | [Messages](docs/reference/messages.md) |
+| Error codes | [Errors](docs/reference/errors.md) |
 
 ## Contributing
 
-The [Senecajs org][] encourage open participation. If you feel you can help in any way, be it with
-documentation, examples, extra testing, or new features please get in touch.
+The [Senecajs org][] encourages open participation. To run the tests
+you need Docker and Node.js 24 or 22:
 
-### Running tests
-
-To run tests, simply use npm:
-
+```sh
+npm install
+npm run services:up   # Redis on host port 16380
+npm test
+npm run services:down
 ```
-npm run test
-```
+
+The tests use the Seneca 4 prerelease from `devDependencies`. Details,
+including the environment variables, are in
+[Run the tests locally](docs/how-to/run-the-tests-locally.md). The CI
+workflow is delivered as a patch in `.patches/` (see its README).
 
 ## Background
 
-This plugin uses the [redis](https://github.com/NodeRedis/node_redis) driver.
+This plugin started in 2013 and uses the
+[redis](https://github.com/redis/node-redis) driver (version 2).
 
-[![npm version][npm-badge]][npm-url]
-[![Build Status][travis-badge]][travis-url]
-[![Coveralls][BadgeCoveralls]][Coveralls]
-[![Dependency Status][david-badge]][david-url]
-[![Gitter][gitter-badge]][gitter-url]
+| Plugin | Seneca | Node.js | Redis |
+| ------ | ------ | ------- | ----- |
+| 1.2.x | 3.x, 4.0.0-rc5 and later | 24, 22 (18 and later) | tested with 8.10 |
+| 1.1.x | 1.x to 3.x | 4, 6 | |
+
+Released under the [MIT][] license.
+
 [npm-badge]: https://img.shields.io/npm/v/seneca-redis-store.svg
 [npm-url]: https://npmjs.com/package/seneca-redis-store
-[travis-badge]: https://travis-ci.org/senecajs/seneca-redis-store.svg
-[travis-url]: https://travis-ci.org/senecajs/seneca-redis-store
-[codeclimate-badge]: https://codeclimate.com/github/senecajs/seneca-redis-store/badges/gpa.svg
-[codeclimate-url]: https://codeclimate.com/github/senecajs/seneca-redis-store
-[Coveralls]: https://coveralls.io/github/senecajs/seneca-mem-store?branch=master
-[BadgeCoveralls]: https://coveralls.io/repos/github/senecajs/seneca-mem-store/badge.svg?branch=master
-[david-badge]: https://david-dm.org/senecajs/seneca-redis-store.svg
-[david-url]: https://david-dm.org/senecajs/seneca-redis-store
-[gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
-[gitter-url]: https://gitter.im/senecajs/seneca
 [MIT]: ./LICENSE
 [Senecajs org]: https://github.com/senecajs/
 [Seneca.js]: https://www.npmjs.com/package/seneca
 [senecajs.org]: http://senecajs.org/
 [redis-url]: http://redis.io/
-[Redis options]: https://github.com/NodeRedis/node_redis#rediscreateclient
 [github issue]: https://github.com/senecajs/seneca-redis-store/issues
-[@senecajs]: http://twitter.com/senecajs

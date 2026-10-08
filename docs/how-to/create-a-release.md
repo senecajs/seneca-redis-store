@@ -5,7 +5,7 @@
 3.  Pull down the repository locally on the master branch.
 4.  Ensure there are no outstanding commits and the branch is clean.
 5.  Run `npm install` and ensure all dependencies correctly install.
-6.  Run `npm run test` and ensure testing and linting passes.
+6.  Run `npm run services:up`, then `npm test`, and ensure the tests pass. Run `npm run services:down` afterwards.
 7.  Run `npm version vx.x.x -m "version x.x.x"` where `x.x.x` is the version.
 8.  Run `git push upstream master --tags`
 9.  Run `npm publish`

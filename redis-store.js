@@ -54,8 +54,7 @@ module.exports = function(opts) {
   function reconnect(args) {
     configure(connectSpec, function(err) {
       if (err) {
-        seneca.log(
-          null,
+        seneca.log.debug(
           'db reconnect (wait ' + waitmillis + 'ms) failed: ' + err
         )
         waitmillis = Math.min(2 * waitmillis, MAX_WAIT)
@@ -64,7 +63,7 @@ module.exports = function(opts) {
         }, waitmillis)
       } else {
         waitmillis = MIN_WAIT
-        seneca.log(null, 'reconnect ok')
+        seneca.log.debug('reconnect ok')
       }
     })
   }
@@ -85,13 +84,13 @@ module.exports = function(opts) {
 
     if (_.isString(conf)) {
       dbConn = Redis.createClient(conf)
-      seneca.log({ tag$: 'init' }, 'db ' + conf + ' opened.')
+      seneca.log.debug('db ' + conf + ' opened.')
     } else if (_.has(spec, 'uri')) {
       dbConn = Redis.createClient(conf.uri, conf.options)
-      seneca.log({ tag$: 'init' }, 'db ' + conf.uri + ' opened.')
+      seneca.log.debug('db ' + conf.uri + ' opened.')
     } else {
       dbConn = Redis.createClient()
-      seneca.log({ tag$: 'init' }, 'db localhost opened.')
+      seneca.log.debug('db localhost opened.')
     }
 
     dbConn.on('error', function(err) {
@@ -101,7 +100,7 @@ module.exports = function(opts) {
     if (_.has(conf, 'db')) {
       dbConn.select(conf.db, function(err) {
         if (err) return cb(err)
-        seneca.log({ tag$: 'selected db' }, 'selected db ' + conf.db)
+        seneca.log.debug('selected db ' + conf.db)
       })
     }
 
@@ -154,13 +153,29 @@ module.exports = function(opts) {
         }
       }
 
-      entp = NOSJ.stringify(ent.data$(false))
+      var data = ent.data$(false)
+      var merge = !(false === args.merge$ || false === opts.merge)
 
-      // var objectMap = determineObjectMap(ent)
-      dbConn.hset(table, ent.id, entp, function(err, result) {
+      function write(stored) {
+        entp = NOSJ.stringify(stored)
+        dbConn.hset(table, ent.id, entp, function(err, result) {
+          if (!error(args, err, cb)) {
+            seneca.log.debug('save', result)
+            // Reply with a copy so later changes to either object stay apart.
+            cb(null, ent.make$(NOSJ.parse(entp)))
+          }
+        })
+      }
+
+      if (!merge) {
+        return write(data)
+      }
+
+      // Merge into the stored entity, as the seneca-store-test contract
+      // expects: fields absent from the update are kept.
+      dbConn.hget(table, ent.id, function(err, row) {
         if (!error(args, err, cb)) {
-          seneca.log(args.tag$, 'save', result)
-          cb(null, ent)
+          write(Object.assign(row ? NOSJ.parse(row) : {}, data))
         }
       })
     },
@@ -187,7 +202,7 @@ module.exports = function(opts) {
         store.list(args, function(err, list) {
           if (!error(args, err, cb)) {
             var ent = list[0] || null
-            seneca.log(args.tag$, 'load', ent)
+            seneca.log.debug('load', ent)
             cb(err, ent)
           }
         })
@@ -198,7 +213,7 @@ module.exports = function(opts) {
               cb(null, null)
             } else {
               var ent = qent.make$(NOSJ.parse(row))
-              seneca.log(args.tag$, 'load', ent)
+              seneca.log.debug('load', ent)
               cb(null, ent)
             }
           }
@@ -240,11 +255,20 @@ module.exports = function(opts) {
             list.push(ent)
           })
 
+          // Opaque queries (an id string or an array of ids) select by id.
+          if (_.isString(q) || _.isArray(q)) {
+            q = { id: q }
+          }
+
           if (!_.isEmpty(q)) {
             list = _.filter(list, function(elem) {
               var match = true
               _.each(q, function(value, key) {
-                var computed = elem[key] === value
+                // Query directives such as all$ or load$ are not fields.
+                if (!isField(key)) return
+                var computed = _.isArray(value)
+                  ? _.includes(value, elem[key])
+                  : elem[key] === value
                 match = match && computed
               })
               return match
@@ -272,33 +296,55 @@ module.exports = function(opts) {
       var q = args.q
       var table = tablename(qent)
 
-      if (q.id) {
-        dbConn.hdel(table, q.id, function(err, result) {
-          if (!error(args, err, cb)) {
-            cb(null, [result])
-          }
-        })
-      } else if (q.all$) {
-        dbConn.del(table, function(err, result) {
-          if (!error(args, err, cb)) {
-            cb(null, [result])
-          }
-        })
-      } else if (!_.isEmpty(q)) {
-        store.list(args, function(err, elements) {
-          if (err) return cb(err)
-          var redisArgs = _.map(elements, 'id')
-          redisArgs.unshift(table)
+      if (_.isString(q) || _.isArray(q)) {
+        q = { id: q }
+      }
 
-          dbConn.hdel(redisArgs, function(err, result) {
+      if (q.all$ && 0 === Object.keys(q).filter(isField).length) {
+        // Nothing else to match: drop the whole hash. Deleted entities are
+        // never returned for all$.
+        return dbConn.del(table, function(err) {
+          if (!error(args, err, cb)) {
+            cb(null, null)
+          }
+        })
+      }
+
+      // Fast path: a query that is only a single id needs no hash scan.
+      var fields = Object.keys(q).filter(isField)
+      if (!q.all$ && 1 === fields.length && _.isString(q.id)) {
+        var removeById = function(row) {
+          dbConn.hdel(table, q.id, function(err, count) {
             if (!error(args, err, cb)) {
-              cb(null, [result])
+              cb(null, q.load$ && count ? qent.make$(NOSJ.parse(row)) : null)
             }
           })
+        }
+        if (!q.load$) return removeById(null)
+        return dbConn.hget(table, q.id, function(err, row) {
+          if (!error(args, err, cb)) {
+            if (!row) return cb(null, null)
+            removeById(row)
+          }
         })
-      } else {
-        cb(null, null)
       }
+
+      // Find the matching entities, then delete them: all matches for
+      // all$, otherwise only the first one.
+      store.list({ qent: qent, q: q }, function(err, elements) {
+        if (err) return cb(err)
+        if (!q.all$) elements = elements.slice(0, 1)
+        if (0 === elements.length) return cb(null, null)
+
+        var redisArgs = _.map(elements, 'id')
+        redisArgs.unshift(table)
+
+        dbConn.hdel(redisArgs, function(err) {
+          if (!error(args, err, cb)) {
+            cb(null, q.load$ && !q.all$ ? elements[0] : null)
+          }
+        })
+      })
     },
 
     /**
@@ -316,7 +362,12 @@ module.exports = function(opts) {
   /**
    * initialization
    */
-  var meta = seneca.store.init(seneca, opts, store)
+  // seneca-entity 1.x decorated seneca.store; current versions export
+  // the store initializer as entity/init.
+  var storeInit = seneca.store
+    ? seneca.store.init
+    : seneca.export('entity/init')
+  var meta = storeInit(seneca, opts, store)
   desc = meta.desc
   seneca.add({ init: store.name, tag: meta.tag }, function(args, done) {
     configure(opts, function(err) {
@@ -338,6 +389,10 @@ module.exports = function(opts) {
 
 /* ----------------------------------------------------------------------------
  * supporting boilerplate */
+
+function isField(key) {
+  return '$' !== key[key.length - 1]
+}
 
 var tablename = function(entity) {
   var canon = entity.canon$({ object: true })

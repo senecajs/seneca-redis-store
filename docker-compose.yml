@@ -1,4 +1,15 @@
-redis:
-  build: ./docker
-  ports:
-    - "6379:6379"
+# Services used by the tests. Start with `npm run services:up`,
+# stop with `npm run services:down`.
+name: seneca-redis-store
+
+services:
+  redis:
+    image: redis:8.10
+    container_name: seneca-redis-store-redis
+    ports:
+      - '16380:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 20
