@@ -1,0 +1,66 @@
+From cf62d844f7441474363c18c241d2da4731fd8893 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 8 Oct 2026 11:49:07 +0000
+Subject: [PATCH] ci: add the build workflow with a Redis service container
+
+Run npm test on Node 24 and 22 against a redis:8.10 service container
+on host port 16380, the same port and environment variables as the
+local docker-compose.yml.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01LaHppcejXbSsAH4BZXNsjV
+---
+ .github/workflows/build.yml | 41 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 .github/workflows/build.yml
+
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+new file mode 100644
+index 0000000..90f7363
+--- /dev/null
++++ b/.github/workflows/build.yml
+@@ -0,0 +1,41 @@
++name: build
++
++on:
++  push:
++    branches: [master, main]
++  pull_request:
++    branches: [master, main]
++
++jobs:
++  build:
++    runs-on: ubuntu-latest
++
++    strategy:
++      matrix:
++        node-version: [24.x, 22.x]
++
++    services:
++      redis:
++        image: redis:8.10
++        ports:
++          - 16380:6379
++        options: >-
++          --health-cmd "redis-cli ping"
++          --health-interval 5s
++          --health-timeout 5s
++          --health-retries 20
++
++    env:
++      SENECA_TEST_REDIS_HOST: 127.0.0.1
++      SENECA_TEST_REDIS_PORT: 16380
++
++    steps:
++      - uses: actions/checkout@v4
++      - name: Use Node.js ${{ matrix.node-version }}
++        uses: actions/setup-node@v4
++        with:
++          node-version: ${{ matrix.node-version }}
++          cache: npm
++      - run: npm install
++      - run: npm run build --if-present
++      - run: npm test
+-- 
+2.43.0
+
