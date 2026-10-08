@@ -19,7 +19,10 @@ Seneca 4 prerelease (`seneca@4.0.0-rc5`), together with `seneca-entity`.
 npm install seneca seneca-entity seneca-redis-store
 ```
 
-The package is published on npm as `seneca-redis-store`. You need a
+The package is published on npm as `seneca-redis-store` (latest
+published version 1.1.0). The repository's `package.json` now names it
+`@seneca/redis-store`, but that scoped name has not been published yet,
+so install and `require` the unscoped name until it is. You need a
 running Redis server.
 
 ## Quick Example

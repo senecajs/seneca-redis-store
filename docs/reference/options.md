@@ -10,7 +10,7 @@ read by Seneca 3 only.
 | `options` | object | none | Client options, used only together with `uri`. |
 | `db` | number | none | Database number selected after connecting. |
 | `minwait` | number | `16` | Milliseconds; non zero enables reconnect attempts. |
-| `maxwait` | number | `65336` | Milliseconds; upper bound of the reconnect wait. |
+| `maxwait` | number | `65336` | Currently ignored: reconnect always caps the wait at 65336 ms (known bug). |
 | `merge` | boolean | `true` | `false` makes `save$` replace stored entities. |
 
 The `seneca-entity` store options (for example `map`, which limits the
@@ -38,8 +38,12 @@ When set, the plugin sends `SELECT <db>` after creating the client.
 
 When a Redis command fails with `ECONNREFUSED` or a `notConnected`
 error, the plugin creates a new client. If that fails it retries,
-doubling the wait each time up to `maxwait`. `minwait` must be non zero
+doubling the wait each time up to 65336 ms. `minwait` must be non zero
 for this to happen; both default when they are `0` or unset.
+
+`maxwait` is currently ignored: the reconnect loop uses the built in
+constant (65336 ms) instead of `opts.maxwait`. This is a bug in the
+plugin code, not intended behaviour.
 
 ## merge
 

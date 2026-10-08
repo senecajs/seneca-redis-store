@@ -310,6 +310,25 @@ module.exports = function(opts) {
         })
       }
 
+      // Fast path: a query that is only a single id needs no hash scan.
+      var fields = Object.keys(q).filter(isField)
+      if (!q.all$ && 1 === fields.length && _.isString(q.id)) {
+        var removeById = function(row) {
+          dbConn.hdel(table, q.id, function(err, count) {
+            if (!error(args, err, cb)) {
+              cb(null, q.load$ && count ? qent.make$(NOSJ.parse(row)) : null)
+            }
+          })
+        }
+        if (!q.load$) return removeById(null)
+        return dbConn.hget(table, q.id, function(err, row) {
+          if (!error(args, err, cb)) {
+            if (!row) return cb(null, null)
+            removeById(row)
+          }
+        })
+      }
+
       // Find the matching entities, then delete them: all matches for
       // all$, otherwise only the first one.
       store.list({ qent: qent, q: q }, function(err, elements) {
