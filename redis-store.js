@@ -153,13 +153,29 @@ module.exports = function(opts) {
         }
       }
 
-      entp = NOSJ.stringify(ent.data$(false))
+      var data = ent.data$(false)
+      var merge = !(false === args.merge$ || false === opts.merge)
 
-      // var objectMap = determineObjectMap(ent)
-      dbConn.hset(table, ent.id, entp, function(err, result) {
+      function write(stored) {
+        entp = NOSJ.stringify(stored)
+        dbConn.hset(table, ent.id, entp, function(err, result) {
+          if (!error(args, err, cb)) {
+            seneca.log.debug('save', result)
+            // Reply with a copy so later changes to either object stay apart.
+            cb(null, ent.make$(NOSJ.parse(entp)))
+          }
+        })
+      }
+
+      if (!merge) {
+        return write(data)
+      }
+
+      // Merge into the stored entity, as the seneca-store-test contract
+      // expects: fields absent from the update are kept.
+      dbConn.hget(table, ent.id, function(err, row) {
         if (!error(args, err, cb)) {
-          seneca.log.debug('save', result)
-          cb(null, ent)
+          write(Object.assign(row ? NOSJ.parse(row) : {}, data))
         }
       })
     },
@@ -239,11 +255,20 @@ module.exports = function(opts) {
             list.push(ent)
           })
 
+          // Opaque queries (an id string or an array of ids) select by id.
+          if (_.isString(q) || _.isArray(q)) {
+            q = { id: q }
+          }
+
           if (!_.isEmpty(q)) {
             list = _.filter(list, function(elem) {
               var match = true
               _.each(q, function(value, key) {
-                var computed = elem[key] === value
+                // Query directives such as all$ or load$ are not fields.
+                if (!isField(key)) return
+                var computed = _.isArray(value)
+                  ? _.includes(value, elem[key])
+                  : elem[key] === value
                 match = match && computed
               })
               return match
@@ -271,33 +296,36 @@ module.exports = function(opts) {
       var q = args.q
       var table = tablename(qent)
 
-      if (q.id) {
-        dbConn.hdel(table, q.id, function(err, result) {
-          if (!error(args, err, cb)) {
-            cb(null, [result])
-          }
-        })
-      } else if (q.all$) {
-        dbConn.del(table, function(err, result) {
-          if (!error(args, err, cb)) {
-            cb(null, [result])
-          }
-        })
-      } else if (!_.isEmpty(q)) {
-        store.list(args, function(err, elements) {
-          if (err) return cb(err)
-          var redisArgs = _.map(elements, 'id')
-          redisArgs.unshift(table)
-
-          dbConn.hdel(redisArgs, function(err, result) {
-            if (!error(args, err, cb)) {
-              cb(null, [result])
-            }
-          })
-        })
-      } else {
-        cb(null, null)
+      if (_.isString(q) || _.isArray(q)) {
+        q = { id: q }
       }
+
+      if (q.all$ && 0 === Object.keys(q).filter(isField).length) {
+        // Nothing else to match: drop the whole hash. Deleted entities are
+        // never returned for all$.
+        return dbConn.del(table, function(err) {
+          if (!error(args, err, cb)) {
+            cb(null, null)
+          }
+        })
+      }
+
+      // Find the matching entities, then delete them: all matches for
+      // all$, otherwise only the first one.
+      store.list({ qent: qent, q: q }, function(err, elements) {
+        if (err) return cb(err)
+        if (!q.all$) elements = elements.slice(0, 1)
+        if (0 === elements.length) return cb(null, null)
+
+        var redisArgs = _.map(elements, 'id')
+        redisArgs.unshift(table)
+
+        dbConn.hdel(redisArgs, function(err) {
+          if (!error(args, err, cb)) {
+            cb(null, q.load$ && !q.all$ ? elements[0] : null)
+          }
+        })
+      })
     },
 
     /**
@@ -342,6 +370,10 @@ module.exports = function(opts) {
 
 /* ----------------------------------------------------------------------------
  * supporting boilerplate */
+
+function isField(key) {
+  return '$' !== key[key.length - 1]
+}
 
 var tablename = function(entity) {
   var canon = entity.canon$({ object: true })
