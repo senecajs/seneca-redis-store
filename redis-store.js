@@ -54,8 +54,7 @@ module.exports = function(opts) {
   function reconnect(args) {
     configure(connectSpec, function(err) {
       if (err) {
-        seneca.log(
-          null,
+        seneca.log.debug(
           'db reconnect (wait ' + waitmillis + 'ms) failed: ' + err
         )
         waitmillis = Math.min(2 * waitmillis, MAX_WAIT)
@@ -64,7 +63,7 @@ module.exports = function(opts) {
         }, waitmillis)
       } else {
         waitmillis = MIN_WAIT
-        seneca.log(null, 'reconnect ok')
+        seneca.log.debug('reconnect ok')
       }
     })
   }
@@ -85,13 +84,13 @@ module.exports = function(opts) {
 
     if (_.isString(conf)) {
       dbConn = Redis.createClient(conf)
-      seneca.log({ tag$: 'init' }, 'db ' + conf + ' opened.')
+      seneca.log.debug('db ' + conf + ' opened.')
     } else if (_.has(spec, 'uri')) {
       dbConn = Redis.createClient(conf.uri, conf.options)
-      seneca.log({ tag$: 'init' }, 'db ' + conf.uri + ' opened.')
+      seneca.log.debug('db ' + conf.uri + ' opened.')
     } else {
       dbConn = Redis.createClient()
-      seneca.log({ tag$: 'init' }, 'db localhost opened.')
+      seneca.log.debug('db localhost opened.')
     }
 
     dbConn.on('error', function(err) {
@@ -101,7 +100,7 @@ module.exports = function(opts) {
     if (_.has(conf, 'db')) {
       dbConn.select(conf.db, function(err) {
         if (err) return cb(err)
-        seneca.log({ tag$: 'selected db' }, 'selected db ' + conf.db)
+        seneca.log.debug('selected db ' + conf.db)
       })
     }
 
@@ -159,7 +158,7 @@ module.exports = function(opts) {
       // var objectMap = determineObjectMap(ent)
       dbConn.hset(table, ent.id, entp, function(err, result) {
         if (!error(args, err, cb)) {
-          seneca.log(args.tag$, 'save', result)
+          seneca.log.debug('save', result)
           cb(null, ent)
         }
       })
@@ -187,7 +186,7 @@ module.exports = function(opts) {
         store.list(args, function(err, list) {
           if (!error(args, err, cb)) {
             var ent = list[0] || null
-            seneca.log(args.tag$, 'load', ent)
+            seneca.log.debug('load', ent)
             cb(err, ent)
           }
         })
@@ -198,7 +197,7 @@ module.exports = function(opts) {
               cb(null, null)
             } else {
               var ent = qent.make$(NOSJ.parse(row))
-              seneca.log(args.tag$, 'load', ent)
+              seneca.log.debug('load', ent)
               cb(null, ent)
             }
           }
@@ -316,7 +315,12 @@ module.exports = function(opts) {
   /**
    * initialization
    */
-  var meta = seneca.store.init(seneca, opts, store)
+  // seneca-entity 1.x decorated seneca.store; current versions export
+  // the store initializer as entity/init.
+  var storeInit = seneca.store
+    ? seneca.store.init
+    : seneca.export('entity/init')
+  var meta = storeInit(seneca, opts, store)
   desc = meta.desc
   seneca.add({ init: store.name, tag: meta.tag }, function(args, done) {
     configure(opts, function(err) {

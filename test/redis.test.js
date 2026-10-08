@@ -1,28 +1,33 @@
 'use strict'
 
-var Seneca = require('seneca')
-var Shared = require('seneca-store-test')
-var Lab = require('lab')
-var lab = (exports.lab = Lab.script())
+const Seneca = require('seneca')
+const Shared = require('seneca-store-test')
+const Lab = require('@hapi/lab')
+const lab = (exports.lab = Lab.script())
 
-var before = lab.before
-var describe = lab.describe
+const before = lab.before
+const after = lab.after
+const describe = lab.describe
 
-var si = Seneca()
+// Connection settings match docker-compose.yml; override for other setups.
+const REDIS_HOST = process.env.SENECA_TEST_REDIS_HOST || '127.0.0.1'
+const REDIS_PORT = process.env.SENECA_TEST_REDIS_PORT || '16380'
 
-if (si.version >= '2.0.0') {
-  si.use('seneca-entity')
+const si = Seneca({ legacy: false }).test()
+
+if (si.version.startsWith('3.')) {
+  si.use('seneca-promisify')
 }
 
-si.use('..', { uri: 'redis://localhost:6379' })
+si.use('seneca-entity')
+si.use('..', { uri: 'redis://' + REDIS_HOST + ':' + REDIS_PORT })
 
-describe('redis-basic', function() {
-  before({}, function(done) {
-    si.ready(done)
-  })
+describe('redis-basic', function () {
+  before(() => new Promise((resolve) => si.ready(resolve)))
+  after(() => new Promise((resolve) => si.close(resolve)))
 
   Shared.basictest({
     seneca: si,
-    script: lab
+    script: lab,
   })
 })
