@@ -1,6 +1,6 @@
 {
   "name": "@seneca/redis-store",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Redis storage layer for Seneca framework",
   "main": "redis-store.js",
   "scripts": {
@@ -13,7 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/senecajs/seneca-redis-store.git"
+    "url": "git+https://github.com/senecajs/seneca-redis-store.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "seneca",
@@ -43,7 +46,7 @@
     "url": "https://github.com/senecajs/seneca-redis-store/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   },
   "license": "MIT",
   "dependencies": {
@@ -55,12 +58,11 @@
   "devDependencies": {
     "@hapi/code": "^9.0.3",
     "@hapi/lab": "^26.0.1",
+    "@seneca/entity": "^29.0.0",
+    "@seneca/store-test": "^7.0.0",
     "docco": "0.7.x",
     "prettier": "^1.10.2",
-    "seneca": "^4.0.0-rc5",
-    "seneca-entity": "^28.1.0",
-    "seneca-promisify": "^3.7.2",
-    "seneca-store-test": "^6.0.0"
+    "seneca": "^4.0.0"
   },
   "files": [
     "README.md",
@@ -69,6 +71,7 @@
     "redis-store.js"
   ],
   "peerDependencies": {
-    "seneca": ">=3 || >=4.0.0-rc5"
+    "@seneca/entity": "^29.0.0",
+    "seneca": "^4.0.0"
   }
 }
