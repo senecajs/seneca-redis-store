@@ -18,7 +18,7 @@ of entities of that type. Lookups by id (`load$(id)`) use a single
 
 ## Lifecycle
 
-1. `seneca.use()` registers the store with `seneca-entity` and adds
+1. `seneca.use()` registers the store with `@seneca/entity` and adds
    `init:redis-store`.
 2. Seneca runs `init:redis-store` before `ready`. It creates one Redis
    client for the plugin instance and selects `db` when given.
@@ -26,13 +26,15 @@ of entities of that type. Lookups by id (`load$(id)`) use a single
 4. `seneca.close()` runs the store's close through
    `sys:seneca,cmd:close`, which sends `QUIT`.
 
-## Seneca 3 and Seneca 4
+## Seneca 4
 
-The plugin code is the same for both. The differences that matter:
+Version 2 supports Seneca 4 only. Seneca 3 users stay on
+`seneca-redis-store@1`. What differs from Seneca 3:
 
-* Seneca 4 needs a current `seneca-entity`, which exports `entity/init`
-  instead of decorating `seneca.store`. The plugin uses whichever is
-  present.
+* The plugin needs `@seneca/entity` 29, which exports `entity/init`.
+  The plugin registers the store through it, so load `@seneca/entity`
+  first. The `seneca.store` object of `seneca-entity` 1.x is no longer
+  used.
 * Seneca 4 reads plugin options only from `use()` and
   `options.plugin['redis-store']`.
 * Seneca 4 does not wrap action errors, so callbacks receive the

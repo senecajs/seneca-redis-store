@@ -1,6 +1,6 @@
 # Options
 
-Pass options to `seneca.use('seneca-redis-store', { ... })`, or under
+Pass options to `seneca.use('@seneca/redis-store', { ... })`, or under
 `options.plugin['redis-store']`. Top level `options['redis-store']` is
 read by Seneca 3 only.
 
@@ -13,9 +13,9 @@ read by Seneca 3 only.
 | `maxwait` | number | `65336` | Currently ignored: reconnect always caps the wait at 65336 ms (known bug). |
 | `merge` | boolean | `true` | `false` makes `save$` replace stored entities. |
 
-The `seneca-entity` store options (for example `map`, which limits the
+The `@seneca/entity` store options (for example `map`, which limits the
 store to some entity types) are also accepted; they are handled by
-`seneca-entity`.
+`@seneca/entity`.
 
 ## uri
 

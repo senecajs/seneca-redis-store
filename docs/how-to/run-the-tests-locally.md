@@ -2,14 +2,14 @@
 
 Goal: run the test suite against a real Redis server.
 
-1. Use Node.js 24 (or 22) and install the dependencies:
+1. Use Node.js 24 or later and install the dependencies:
 
    ```sh
    npm install
    ```
 
-   The `devDependencies` install the Seneca 4 prerelease
-   (`seneca@^4.0.0-rc5`), `seneca-entity` and `seneca-store-test`.
+   The `devDependencies` install Seneca 4 (`seneca@^4.0.0`),
+   `@seneca/entity` and `@seneca/store-test`.
 
 2. Start Redis with Docker:
 

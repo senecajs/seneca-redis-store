@@ -1,7 +1,7 @@
 # Getting started
 
-In this tutorial you store fruit entities in Redis. You need Node.js 22
-or 24 and Docker (or any Redis server).
+In this tutorial you store fruit entities in Redis. You need Node.js 24
+or later and Docker (or any Redis server).
 
 ## 1. Start Redis
 
@@ -17,14 +17,14 @@ This starts `redis:8.10` with host port 16380 (see `docker-compose.yml`).
 In your own project, install the packages instead:
 
 ```sh
-npm install seneca seneca-entity seneca-redis-store
+npm install seneca@^4 @seneca/entity @seneca/redis-store
 ```
 
 ## 2. Write the program
 
 Save this as [`docs/examples/getting-started.js`](../examples/getting-started.js)
 (in your own project, replace `require('../../redis-store.js')` with
-`'seneca-redis-store'`):
+`'@seneca/redis-store'`):
 
 ```js
 // Save, load, list and remove entities in Redis.
@@ -36,7 +36,7 @@ const port = process.env.SENECA_TEST_REDIS_PORT || '16380'
 
 const seneca = Seneca({ legacy: false })
   .quiet()
-  .use('seneca-entity')
+  .use('@seneca/entity')
   .use(require('../../redis-store.js'), {
     uri: 'redis://' + host + ':' + port,
   })
@@ -78,7 +78,7 @@ seneca.ready(function () {
 node docs/examples/getting-started.js
 ```
 
-Output with `seneca@4.0.0-rc5`:
+Output with `seneca@4.0.0`:
 
 ```
 saved: apple Pink Lady 0.99
@@ -90,7 +90,7 @@ closed
 
 ## What happened
 
-* `seneca-entity` adds `make$` and the entity operations. This plugin
+* `@seneca/entity` adds `make$` and the entity operations. This plugin
   answers them.
 * `save$` wrote the field `apple` of the Redis hash `fruit`, with the
   entity data as JSON. `id$` chose the id; without it the plugin

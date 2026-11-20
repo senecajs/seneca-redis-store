@@ -2,15 +2,23 @@
 
 Goal: keep using this store when the application moves to Seneca 4.
 
-1. Upgrade the packages. Seneca 4 needs a current `seneca-entity`:
+1. Upgrade the packages. Seneca 4 needs `@seneca/entity` in place of
+   `seneca-entity`, and this plugin is now `@seneca/redis-store`:
 
    ```sh
-   npm install seneca@^4.0.0-rc5 seneca-entity@^28 seneca-redis-store@^1.2
+   npm uninstall seneca-entity seneca-redis-store
+   npm install seneca@^4 @seneca/entity @seneca/redis-store
    ```
 
-   Version 1.2.0 of this plugin finds the store initializer through the
-   `entity/init` export of current `seneca-entity`; older versions of
-   the plugin needed `seneca.store`, which only `seneca-entity` 1.x set.
+   Load both by their full names, `@seneca/entity` first:
+
+   ```js
+   seneca.use('@seneca/entity').use('@seneca/redis-store', options)
+   ```
+
+   Version 2 registers the store through the `entity/init` export of
+   `@seneca/entity`. Older versions of the plugin needed `seneca.store`,
+   which only `seneca-entity` 1.x set.
 
 2. Move top level plugin options. Seneca 3 merged `options['redis-store']`
    into the plugin options; Seneca 4 does not. Pass the options to
@@ -29,6 +37,6 @@ Goal: keep using this store when the application moves to Seneca 4.
    error. Read `err.message` and `err.code` directly.
 
 4. Check code that relied on the 1.1 behaviour of `remove$` and `save$`.
-   Version 1.2.0 changed them to match `seneca-store-test` 6; see
+   Version 2.0.0 changed them to match `@seneca/store-test`; see
    [Messages](../reference/messages.md#remove) and
    [Messages](../reference/messages.md#save).
