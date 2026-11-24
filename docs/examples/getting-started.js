@@ -7,7 +7,7 @@ const port = process.env.SENECA_TEST_REDIS_PORT || '16380'
 
 const seneca = Seneca({ legacy: false })
   .quiet()
-  .use('seneca-entity')
+  .use('@seneca/entity')
   .use(require('../../redis-store.js'), {
     uri: 'redis://' + host + ':' + port,
   })

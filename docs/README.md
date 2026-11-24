@@ -1,4 +1,4 @@
-# seneca-redis-store documentation
+# @seneca/redis-store documentation
 
 The documentation follows the [Diátaxis](https://diataxis.fr/) structure.
 

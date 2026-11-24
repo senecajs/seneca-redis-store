@@ -1,16 +1,17 @@
 # Messages
 
-Applications use the entity API of `seneca-entity` (`make$`, `save$` and
-so on). `seneca-entity` turns each call into a `sys:entity,cmd:<cmd>`
+Applications use the entity API of `@seneca/entity` (`make$`, `save$` and
+so on). `@seneca/entity` turns each call into a `sys:entity,cmd:<cmd>`
 message, and this plugin answers it. Entity names map to Redis hash
 names `zone_base_name` (missing parts are left out, so `-/-/foo` is the
 hash `foo` and `zen/moon/bar` is `zen_moon_bar`).
 
 ## Plugin definition
 
-`seneca.use('seneca-redis-store', options)` registers the store with
-`seneca-entity` and returns `{ name: 'redis-store', tag }`. Load
-`seneca-entity` first.
+`seneca.use('@seneca/redis-store', options)` registers the store with
+`@seneca/entity` and returns `{ name: 'redis-store', tag }`. Load
+`@seneca/entity` first; without it the plugin fails to load with a
+message that says so.
 
 ## init:redis-store
 
@@ -66,5 +67,5 @@ commands the entity API does not cover.
 
 ## close
 
-`seneca-entity` adds the store's close to `sys:seneca,cmd:close`, so
+`@seneca/entity` adds the store's close to `sys:seneca,cmd:close`, so
 `seneca.close()` sends `QUIT` to Redis and releases the client.

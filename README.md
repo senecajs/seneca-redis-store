@@ -5,8 +5,8 @@
 
 A Seneca entity store that keeps entities in [Redis][redis-url]. Each
 entity type is a Redis hash; each entity is one field of that hash,
-holding the entity data as JSON. It works with Seneca 3 and with the
-Seneca 4 prerelease (`seneca@4.0.0-rc5`), together with `seneca-entity`.
+holding the entity data as JSON. It works with Seneca 4, together with
+`@seneca/entity` 29. Seneca 3 users stay on `seneca-redis-store@1`.
 
 [![npm version][npm-badge]][npm-url]
 
@@ -16,13 +16,11 @@ Seneca 4 prerelease (`seneca@4.0.0-rc5`), together with `seneca-entity`.
 ## Install
 
 ```sh
-npm install seneca seneca-entity seneca-redis-store
+npm install seneca@^4 @seneca/entity @seneca/redis-store
 ```
 
-The package is published on npm as `seneca-redis-store` (latest
-published version 1.1.0). The repository's `package.json` now names it
-`@seneca/redis-store`, but that scoped name has not been published yet,
-so install and `require` the unscoped name until it is. You need a
+Versions up to 1.1.0 were published as `seneca-redis-store`. From 2.0.0
+the package is `@seneca/redis-store`. You need Node.js 24 or later and a
 running Redis server.
 
 ## Quick Example
@@ -31,8 +29,8 @@ running Redis server.
 const Seneca = require('seneca')
 
 const seneca = Seneca()
-  .use('seneca-entity')
-  .use('seneca-redis-store', { uri: 'redis://127.0.0.1:6379' })
+  .use('@seneca/entity')
+  .use('@seneca/redis-store', { uri: 'redis://127.0.0.1:6379' })
 
 seneca.ready(function () {
   const apple = seneca.make$('fruit')
@@ -73,7 +71,7 @@ logic does not depend on the storage engine. See
 ## API
 
 You do not call this plugin directly. It answers the entity messages
-that `seneca-entity` sends.
+that `@seneca/entity` sends.
 
 | Topic | Reference |
 | ----- | --------- |
@@ -84,7 +82,7 @@ that `seneca-entity` sends.
 ## Contributing
 
 The [Senecajs org][] encourages open participation. To run the tests
-you need Docker and Node.js 24 or 22:
+you need Docker and Node.js 24 or later:
 
 ```sh
 npm install
@@ -93,7 +91,8 @@ npm test
 npm run services:down
 ```
 
-The tests use the Seneca 4 prerelease from `devDependencies`. Details,
+The tests use Seneca 4, `@seneca/entity` and `@seneca/store-test` from
+`devDependencies`. Details,
 including the environment variables, are in
 [Run the tests locally](docs/how-to/run-the-tests-locally.md). The CI
 workflow is delivered as a patch in `.patches/` (see its README).
@@ -105,13 +104,13 @@ This plugin started in 2013 and uses the
 
 | Plugin | Seneca | Node.js | Redis |
 | ------ | ------ | ------- | ----- |
-| 1.2.x | 3.x, 4.0.0-rc5 and later | 24, 22 (18 and later) | tested with 8.10 |
+| 2.x | 4.x | 24 and later | tested with 7 and 8.10 |
 | 1.1.x | 1.x to 3.x | 4, 6 | |
 
 Released under the [MIT][] license.
 
-[npm-badge]: https://img.shields.io/npm/v/seneca-redis-store.svg
-[npm-url]: https://npmjs.com/package/seneca-redis-store
+[npm-badge]: https://img.shields.io/npm/v/@seneca/redis-store.svg
+[npm-url]: https://npmjs.com/package/@seneca/redis-store
 [MIT]: ./LICENSE
 [Senecajs org]: https://github.com/senecajs/
 [Seneca.js]: https://www.npmjs.com/package/seneca

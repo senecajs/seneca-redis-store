@@ -5,7 +5,7 @@ Goal: connect the store to your Redis server and database.
 1. Pass a Redis URI. Credentials and port go in the URI:
 
    ```js
-   seneca.use('seneca-redis-store', { uri: 'redis://user:pass@redis.example:6379' })
+   seneca.use('@seneca/redis-store', { uri: 'redis://user:pass@redis.example:6379' })
    ```
 
    Without `uri` the plugin connects to the client default,
@@ -16,7 +16,7 @@ Goal: connect the store to your Redis server and database.
    example, `prefix` puts a prefix in front of every hash name:
 
    ```js
-   seneca.use('seneca-redis-store', {
+   seneca.use('@seneca/redis-store', {
      uri: 'redis://127.0.0.1:6379',
      options: { prefix: 'app:' },
    })
@@ -26,14 +26,14 @@ Goal: connect the store to your Redis server and database.
    after connecting:
 
    ```js
-   seneca.use('seneca-redis-store', { uri: 'redis://127.0.0.1:6379', db: 3 })
+   seneca.use('@seneca/redis-store', { uri: 'redis://127.0.0.1:6379', db: 3 })
    ```
 
 4. Turn off merging on save if an update must replace the whole stored
    entity:
 
    ```js
-   seneca.use('seneca-redis-store', { uri: 'redis://127.0.0.1:6379', merge: false })
+   seneca.use('@seneca/redis-store', { uri: 'redis://127.0.0.1:6379', merge: false })
    ```
 
 5. Register the plugin options in the Seneca options instead, if you

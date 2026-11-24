@@ -362,11 +362,15 @@ module.exports = function(opts) {
   /**
    * initialization
    */
-  // seneca-entity 1.x decorated seneca.store; current versions export
-  // the store initializer as entity/init.
-  var storeInit = seneca.store
-    ? seneca.store.init
-    : seneca.export('entity/init')
+  // @seneca/entity exports the store initializer as entity/init.
+  var storeInit = seneca.export('entity/init')
+  if ('function' !== typeof storeInit) {
+    throw new Error(
+      NAME +
+        ': load @seneca/entity before this plugin, for example ' +
+        "seneca.use('@seneca/entity').use('@seneca/redis-store')"
+    )
+  }
   var meta = storeInit(seneca, opts, store)
   desc = meta.desc
   seneca.add({ init: store.name, tag: meta.tag }, function(args, done) {
